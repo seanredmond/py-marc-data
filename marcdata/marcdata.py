@@ -1,31 +1,31 @@
+import struct
+
 LDR_LEN = 19
+LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
+              "type_of_control", "character_encoding_scheme",
+              "indicator_count", "subfield_code_count",
+              "base_address_of_data", "encoding_level",
+              "descriptive_cataloging_form",
+              "multipart_resource_record_level",
+              "length_of_length_of_field_portion",
+              "length_of_starting_character_position_portion",
+              "length_of_implication_defined_portion", "undefined")
 
 def marc_list(d):
     ldr = leader(d[0:LDR_LEN].decode())
     # drc = directory(d[LDR_LEN:ldr["base_address_of_data"]-5].decode())
     vf = variable_fields(
-        directory(d[LDR_LEN:ldr["base_address_of_data"]-5].decode()),
-        d[ldr["base_address_of_data"]-5:])
-    return {"leader": ldr, "variable_fields": vf}
+        directory(d[LDR_LEN:ldr[7]-5].decode()),
+        d[ldr[7]-5:])
+    return (ldr, vf)
 
 
 def leader(d):
-    return {
-        "record_status": d[0],
-        "type_of_record": d[1],
-        "bibliographic_level": d[2],
-        "type_of_control": d[3],
-        "character_encoding_scheme": d[4],
-        "indicator_count": int(d[5]),
-        "subfield_code_count": int(d[6]),
-        "base_address_of_data": int(d[7:12]),
-        "encoding_level": d[12],
-        "descriptive_cataloging_form": d[13],
-        "multipart_resource_record_level": d[14],
-        "length_of_length_of_field_portion": int(d[15]),
-        "length_of_starting_character_position_portion": int(d[16]),
-        "length_of_implication_defined_portion": int(d[17])
-    }
+    return (d[0], d[1], d[2], d[3], d[4], int(d[5]), int(d[6]), int(d[7:12]), d[12], d[13], d[14], int(d[15]), int(d[16]), int(d[17]), int(d[18]))
+
+
+def leader_dict(l):
+    return dict(zip(LDR_FIELDS, l))
 
 
 def directory(d):
