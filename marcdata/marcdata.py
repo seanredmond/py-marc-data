@@ -80,7 +80,8 @@ def fixed_length_tuple(rec):
 
 def material_desc(m, d):
     print([m, d])
-    return {"BK": material_bk(d), "CF": material_cf(d), "MP": None, "MU": None, "CR": None, "VM": None, "MX": material_mx(d)}[m]
+    return {"BK": material_bk(d), "CF": material_cf(d), "MP": material_mp(d),
+            "MU": None, "CR": None, "VM": None, "MX": material_mx(d)}[m]
 
 
 def material_bk(d):
@@ -90,6 +91,26 @@ def material_bk(d):
 
 def material_cf(d):
     return (d[0:4], d[4], d[5], d[6:8], d[8], d[9], d[10], d[11:])
+
+
+def material_mp(d):
+    return (d[0:4], d[4:6], d[6], d[7], d[8:10], d[10], d[11], d[12],
+            d[13], d[14], d[15:])
+
+
+def material_mu(d):
+    return (d[0:2], d[2], d[3], d[4], d[5], d[6:12], d[12:14], d[14],
+            d[15], d[16])
+
+
+def material_cr(d):
+    return (d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7:10], d[10],
+            d[11], d[12:15], d[15], d[16])
+
+
+def material_vm(d):
+    return (d[0:3], d[3], d[4], d[5:10], d[10], d[11], d[12:15],
+            d[15], d[16])
 
 
 def material_mx(d):
