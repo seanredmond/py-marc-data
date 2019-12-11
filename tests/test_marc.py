@@ -30,3 +30,37 @@ def test_leader_dict():
     assert ldr["length_of_length_of_field_portion"] == 4
     assert ldr["length_of_starting_character_position_portion"] == 5
     assert ldr["length_of_implication_defined_portion"] == 0
+
+
+def test_control_value():
+    marc = marcdata.marc_list(REC1)
+    f008 = marc[1][3]
+    assert marcdata.control_value(f008) == \
+        "800108s1899    ilu           000 0 eng  "
+
+
+def test_fixed_length_tuple():
+    marc = marcdata.marc_list(REC1)
+    print(marcdata.fixed_length_tuple(marc))
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("800108", "s", "1899", "    ", "ilu",
+         ("    ", " ", " ", "    ", " ", "0", "0", "0", " ", "0", " "),
+         "eng", " ", " ")
+
+
+def test_computer_file():
+    marc = marcdata.marc_list(REC_CF)
+    assert marcdata.material_type(marc) == "CF"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("000928", "s", "1990", "    ", "deu",
+         ("    ", " ", "a", "  ", " ", " ", " ", "      "), "eng", " ", " ")
+
+
+def test_mixed_materials():
+    marc = marcdata.marc_list(REC_MX)
+    assert marcdata.material_type(marc) == "MX"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("000724", "i", "1980", "2005", "xxu",
+         ("     ", " ", "          "), "eng", " ", " ")
+
+
