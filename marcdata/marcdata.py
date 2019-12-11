@@ -109,7 +109,7 @@ def material_type(rec):
         return "BK"
 
     # Computer File: Leader/06 (Type of record) contains code m
-    if l[2] == "m":
+    if l[1] == "m":
         return "CF"
 
     # Map: Leader/06 (Type of record) contains code e (Cartographic

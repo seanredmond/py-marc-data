@@ -48,14 +48,6 @@ def test_fixed_length_tuple():
          "eng", " ", " ")
 
 
-def test_computer_file():
-    marc = marcdata.marc_list(REC_CF)
-    assert marcdata.material_type(marc) == "CF"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("000928", "s", "1990", "    ", "deu",
-         ("    ", " ", "a", "  ", " ", " ", " ", "      "), "eng", " ", " ")
-
-
 def test_mixed_materials():
     marc = marcdata.marc_list(REC_MX)
     assert marcdata.material_type(marc) == "MX"
