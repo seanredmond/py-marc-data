@@ -196,7 +196,24 @@ def from_file(f):
                 yield marc_list(rec)
             except ValueError:
                 break
-        
+
+
+def repr_indicators(f):
+    return "".join(["#" if i == " " else i for i in f[1:3]])
+
+
+def repr_field(f):
+    if f[1] is None and f[2] is None:
+        return "{}      {}".format(f[0], f[3][1])
+
+    return "{}    {}{}".format(
+        f[0], repr_indicators(f),
+        "".join(["${}{}".format(s[0], s[1]) for s in f[3:]]))
+
+
+def repr(d):
+    return "\n".join([repr_field(f) for f in d[1]])
+
 
 def test_file(f, t):
     for r in from_file(f):
