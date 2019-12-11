@@ -45,7 +45,7 @@ def variable_fields(d, f):
     try:
         tag = d[0][0]
         data = f[d[0][2]:d[0][2] + d[0][1]-1]
-        return (subfields(tag, data),) + variable_fields(d[1:], f)
+        return ((subfields(tag, data),) + variable_fields(d[1:], f))
     except IndexError as e:
         print("{0} {1} {0}".format("-"*10, "variable_fields"))
         print(d)
@@ -163,6 +163,28 @@ def material_type(rec):
         return "MX"
 
     raise ValueError
+
+
+def find(d, tag, **kwargs):
+    return find_ind(
+        find_ind(
+            tuple([f for f in d[1] if f[0] == tag]),
+            kwargs.get("ind1"), 1),
+        kwargs.get("ind2"), 2)
+
+
+def find_subf(d, code=None):
+    if code is None:
+        return d[3:]
+
+    return tuple([s for s in d[3:] if s[0] == code])
+
+
+def find_ind(d, ind, pos):
+    if ind is None:
+        return d
+
+    return tuple([f for f in d if f[pos] == ind])
 
 
 def from_file(f):

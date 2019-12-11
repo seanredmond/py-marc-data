@@ -56,3 +56,44 @@ def test_mixed_materials():
          ("     ", " ", "          "), "eng", " ", " ")
 
 
+def test_find():
+    marc = marcdata.marc_list(REC1)
+    assert marcdata.find(marc, "010") == \
+        (("010", " ", " ", ("a", "   00000002 ")),)
+
+
+def test_find_multiple():
+    marc = marcdata.marc_list(REC1)
+    assert len(marcdata.find(marc, "650")) == 2
+
+
+def test_find_none():
+    marc = marcdata.marc_list(REC1)
+    assert marcdata.find(marc, "XYZ") == ()
+
+
+def test_find_with_indicators():
+    marc = marcdata.marc_list(REC1)
+    title = (('245', '1', '0',
+              ('a', 'Botanical materia medica and pharmacology;'),
+              ('b', 'drugs considered from a botanical, pharmaceutical, physiological, therapeutical and toxicological standpoint.'),
+              ('c', 'By S. H. Aurand.')),)
+    assert marcdata.find(marc, "245", ind1="x") == ()
+    assert marcdata.find(marc, "245", ind1="1") == title
+
+    assert marcdata.find(marc, "245", ind2="x") == ()
+    assert marcdata.find(marc, "245", ind2="0") == title
+
+    assert marcdata.find(marc, "245", ind1="1", ind2="x") == ()
+    assert marcdata.find(marc, "245", ind1="1", ind2="0") == title
+
+
+def test_subfields():
+    marc = marcdata.marc_list(REC1)
+    title = marcdata.find(marc, "245")[0]
+    assert len(marcdata.find_subf(title)) == 3
+    assert marcdata.find_subf(title, "a") == \
+        (('a', 'Botanical materia medica and pharmacology;'),)
+    assert marcdata.find_subf(title, "c") == \
+        (('c', 'By S. H. Aurand.'),)
+    assert marcdata.find_subf(title, "z") == ()
