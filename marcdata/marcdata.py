@@ -81,7 +81,7 @@ def fixed_length_tuple(rec):
 def material_desc(m, d):
     print([m, d])
     return {"BK": material_bk(d), "CF": material_cf(d), "MP": material_mp(d),
-            "MU": None, "CR": None, "VM": None, "MX": material_mx(d)}[m]
+            "MU": material_mu(d), "CR": material_cr(d), "VM": material_vm(d), "MX": material_mx(d)}[m]
 
 
 def material_bk(d):

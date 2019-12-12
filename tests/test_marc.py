@@ -56,6 +56,25 @@ def test_map():
          "eng", " ", " ")
 
 
+def test_computer_file():
+    marc = marcdata.marc_list(REC_CF)
+    assert marcdata.material_type(marc) == "CF"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("000110", "s", "2000", "    ", "ohu",
+         ("    ", "f", " ", "  ", "m", " ", " ", "      "),
+         "eng", " ", " ")
+
+
+def test_music():
+    marc = marcdata.marc_list(REC_MU)
+    assert marcdata.material_type(marc) == "MU"
+    print(marcdata.fixed_length_tuple(marc))
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("000824", "s", "1998", "    ", "nyu",
+         ("pp", "n", " ", " ", " ", "      ", "  ", " ", " ", " "),
+         "   ", " ", "d")
+
+
 def test_mixed_materials():
     marc = marcdata.marc_list(REC_MX)
     assert marcdata.material_type(marc) == "MX"
