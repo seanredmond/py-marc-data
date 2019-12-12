@@ -68,11 +68,28 @@ def test_computer_file():
 def test_music():
     marc = marcdata.marc_list(REC_MU)
     assert marcdata.material_type(marc) == "MU"
-    print(marcdata.fixed_length_tuple(marc))
     assert marcdata.fixed_length_tuple(marc) == \
         ("000824", "s", "1998", "    ", "nyu",
          ("pp", "n", " ", " ", " ", "      ", "  ", " ", " ", " "),
          "   ", " ", "d")
+
+
+def test_continuing_resource():
+    marc = marcdata.marc_list(REC_CR)
+    assert marcdata.material_type(marc) == "CR"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("940906", "u", "1994", "9999", "dcu",
+         ("u", "u", " ", " ", " ", " ", " ",
+          "   ", " ", "0", "   ", " ", "0"), "eng", " ", " ")
+
+
+def test_visual_materials():
+    marc = marcdata.marc_list(REC_VM)
+    assert marcdata.material_type(marc) == "VM"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("991028", "s", "    ", "    ", "xxu",
+         ("   ", " ", " ", "     ", " ", " ", "   ", "v", "|"),
+         "eng", " ", " ")
 
 
 def test_mixed_materials():
