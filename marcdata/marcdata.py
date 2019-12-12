@@ -55,9 +55,10 @@ def variable_fields(d, f):
 
 
 def subfields(t, d):
-    subf = d.split(b"\x1f")
+    subf = d.rstrip(b"\x1f").split(b"\x1f")
     if len(subf) == 1:
         return (t, None, None, (None, d.decode()))
+
     try:
         return (t, chr(subf[0][0]), chr(subf[0][1])) + \
             tuple([(chr(s[0]), s[1:].decode()) for s in subf[1:]])
