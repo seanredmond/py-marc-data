@@ -41,10 +41,18 @@ def test_control_value():
 
 def test_fixed_length_tuple():
     marc = marcdata.marc_list(REC1)
-    print(marcdata.fixed_length_tuple(marc))
     assert marcdata.fixed_length_tuple(marc) == \
         ("800108", "s", "1899", "    ", "ilu",
          ("    ", " ", " ", "    ", " ", "0", "0", "0", " ", "0", " "),
+         "eng", " ", " ")
+
+
+def test_map():
+    marc = marcdata.marc_list(REC_MP)
+    assert marcdata.material_type(marc) == "MP"
+    assert marcdata.fixed_length_tuple(marc) == \
+        ("940812", "m", "1898", "1906", "pau",
+         ("    ", "  ", " ", "e", "  ", " ", " ", " ", " ", " ", "  "),
          "eng", " ", " ")
 
 
@@ -74,10 +82,10 @@ def test_find_none():
 
 def test_find_with_indicators():
     marc = marcdata.marc_list(REC1)
-    title = (('245', '1', '0',
-              ('a', 'Botanical materia medica and pharmacology;'),
-              ('b', 'drugs considered from a botanical, pharmaceutical, physiological, therapeutical and toxicological standpoint.'),
-              ('c', 'By S. H. Aurand.')),)
+    title = (("245", "1", "0",
+              ("a", "Botanical materia medica and pharmacology;"),
+              ("b", "drugs considered from a botanical, pharmaceutical, physiological, therapeutical and toxicological standpoint."),
+              ("c", "By S. H. Aurand.")),)
     assert marcdata.find(marc, "245", ind1="x") == ()
     assert marcdata.find(marc, "245", ind1="1") == title
 
@@ -93,7 +101,7 @@ def test_subfields():
     title = marcdata.find(marc, "245")[0]
     assert len(marcdata.find_subf(title)) == 3
     assert marcdata.find_subf(title, "a") == \
-        (('a', 'Botanical materia medica and pharmacology;'),)
+        (("a", "Botanical materia medica and pharmacology;"),)
     assert marcdata.find_subf(title, "c") == \
-        (('c', 'By S. H. Aurand.'),)
+        (("c", "By S. H. Aurand."),)
     assert marcdata.find_subf(title, "z") == ()
