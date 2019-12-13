@@ -143,7 +143,13 @@ def test_subfields():
     assert marcdata.find_subf(title, "z") == ()
 
 
-def test_2():
-    marc = marcdata.marc_list(REC_02)
-    assert marcdata.material_type(marc) == "MP"
-    
+#def test_2():
+#    marc = marcdata.marc_list(REC_02)
+#    assert marcdata.material_type(marc) == "MP"
+
+
+def test_bad_record():
+    # tests/bad_record.utf8 is a malformed record
+    with pytest.raises(marcdata.marcdata.InvalidMarcError):
+        marc = marcdata.from_file("tests/bad_record.utf8")
+        next(marc)

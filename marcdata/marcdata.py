@@ -9,9 +9,13 @@ LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
               "length_of_starting_character_position_portion",
               "length_of_implication_defined_portion", "undefined")
 
+
+class InvalidMarcError(Exception):
+    pass
+
+
 def marc_list(d):
     ldr = leader(d[0:LDR_LEN].decode())
-    # drc = directory(d[LDR_LEN:ldr["base_address_of_data"]-5].decode())
     vf = variable_fields(
         directory(d[LDR_LEN:ldr[7]-5].decode()),
         d[ldr[7]-5:])
@@ -46,11 +50,8 @@ def variable_fields(d, f):
         tag = d[0][0]
         data = f[d[0][2]:d[0][2] + d[0][1]-1]
         return ((subfields(tag, data),) + variable_fields(d[1:], f))
-    except IndexError as e:
-        print("{0} {1} {0}".format("-"*10, "variable_fields"))
-        print(d)
-        print(f)
-        raise e
+    except IndexError:
+        raise InvalidMarcError("Could not parse {} field at position {}".format(d[0][0], d[0][2]))
 
 
 def subfields(t, d):
@@ -188,12 +189,17 @@ def find_ind(d, ind, pos):
 
 
 def from_file(f):
-    with open (f, "rb") as file:
-        t = True
-        while t:
+    with open(f, "rb") as file:
+        offset = 0
+        while 1:
             try:
-                rec = file.read(int(file.read(5)) - 5)
+                reclen = int(file.read(5))
+                rec = file.read(reclen - 5)
                 yield marc_list(rec)
+                offset += reclen
+            except InvalidMarcError as e:
+                raise InvalidMarcError(
+                    e.args[0] + " at file offset {}".format(offset))
             except ValueError:
                 break
 
