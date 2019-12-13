@@ -51,22 +51,21 @@ def variable_fields(d, f):
         print(d)
         print(f)
         raise e
-    
 
 
 def subfields(t, d):
+    # Remove extra trailing subfield delimiters, if neccessary, before
+    # splitting into subfields
     subf = d.rstrip(b"\x1f").split(b"\x1f")
+
+    # No subfields means it's a control field, with no indicators and
+    # no subfield code
     if len(subf) == 1:
         return (t, None, None, (None, d.decode()))
 
-    try:
-        return (t, chr(subf[0][0]), chr(subf[0][1])) + \
-            tuple([(chr(s[0]), s[1:].decode()) for s in subf[1:]])
-    except IndexError as e:
-        # This handles an error seen in a LOC file where a control
-        # field has a stray subfield delimiter (\x1f) at the end,
-        # i.e. "  00038361\x1f\x1e"
-        return subfields(t, d.strip(b"\x1f"))
+    return (t, chr(subf[0][0]), chr(subf[0][1])) + \
+        tuple([(chr(s[0]), s[1:].decode()) for s in subf[1:]])
+
 
 def control_value(f):
     return f[3][1]
