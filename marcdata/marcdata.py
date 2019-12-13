@@ -1,13 +1,4 @@
 LDR_LEN = 19
-LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
-              "type_of_control", "character_encoding_scheme",
-              "indicator_count", "subfield_code_count",
-              "base_address_of_data", "encoding_level",
-              "descriptive_cataloging_form",
-              "multipart_resource_record_level",
-              "length_of_length_of_field_portion",
-              "length_of_starting_character_position_portion",
-              "length_of_implication_defined_portion", "undefined")
 
 
 class InvalidMarcError(Exception):
@@ -26,10 +17,6 @@ def leader(d):
     return (d[0], d[1], d[2], d[3], d[4], int(d[5]), int(d[6]),
             int(d[7:12]), d[12], d[13], d[14], int(d[15]), int(d[16]),
             int(d[17]), int(d[18]))
-
-
-def leader_dict(l):
-    return dict(zip(LDR_FIELDS, l))
 
 
 def directory(d):
