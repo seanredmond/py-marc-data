@@ -1,4 +1,5 @@
 import marcdata
+import marcdata.utils
 import pytest
 from tests.marc_records import *
 
@@ -37,67 +38,6 @@ def test_control_value():
     f008 = marc[1][3]
     assert marcdata.control_value(f008) == \
         "800108s1899    ilu           000 0 eng  "
-
-
-def test_fixed_length_tuple():
-    marc = marcdata.marc_list(REC1)
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("800108", "s", "1899", "    ", "ilu",
-         ("    ", " ", " ", "    ", " ", "0", "0", "0", " ", "0", " "),
-         "eng", " ", " ")
-
-
-def test_map():
-    marc = marcdata.marc_list(REC_MP)
-    assert marcdata.material_type(marc) == "MP"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("940812", "m", "1898", "1906", "pau",
-         ("    ", "  ", " ", "e", "  ", " ", " ", " ", " ", " ", "  "),
-         "eng", " ", " ")
-
-
-def test_computer_file():
-    marc = marcdata.marc_list(REC_CF)
-    assert marcdata.material_type(marc) == "CF"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("000110", "s", "2000", "    ", "ohu",
-         ("    ", "f", " ", "  ", "m", " ", " ", "      "),
-         "eng", " ", " ")
-
-
-def test_music():
-    marc = marcdata.marc_list(REC_MU)
-    assert marcdata.material_type(marc) == "MU"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("000824", "s", "1998", "    ", "nyu",
-         ("pp", "n", " ", " ", " ", "      ", "  ", " ", " ", " "),
-         "   ", " ", "d")
-
-
-def test_continuing_resource():
-    marc = marcdata.marc_list(REC_CR)
-    assert marcdata.material_type(marc) == "CR"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("940906", "u", "1994", "9999", "dcu",
-         ("u", "u", " ", " ", " ", " ", " ",
-          "   ", " ", "0", "   ", " ", "0"), "eng", " ", " ")
-
-
-def test_visual_materials():
-    marc = marcdata.marc_list(REC_VM)
-    assert marcdata.material_type(marc) == "VM"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("991028", "s", "    ", "    ", "xxu",
-         ("   ", " ", " ", "     ", " ", " ", "   ", "v", "|"),
-         "eng", " ", " ")
-
-
-def test_mixed_materials():
-    marc = marcdata.marc_list(REC_MX)
-    assert marcdata.material_type(marc) == "MX"
-    assert marcdata.fixed_length_tuple(marc) == \
-        ("000724", "i", "1980", "2005", "xxu",
-         ("     ", " ", "          "), "eng", " ", " ")
 
 
 def test_find():
