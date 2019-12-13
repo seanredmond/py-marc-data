@@ -1,3 +1,4 @@
+import itertools
 from marcdata import *
 
 def fixed_length_tuple(rec):
@@ -105,3 +106,17 @@ def material_type(rec):
         return "MX"
 
     raise ValueError
+
+
+def subfield_dict(s):
+    return s
+
+def field_dict(v):
+    if v[0][3][0] is None:
+        return v[0][3][1]
+    return tuple([{"ind1": f[1], "ind2": f[2], "subfields": subfield_dict(f[3])} for f in v])
+
+
+def marc_dict(marc):
+    print(marc[1])
+    return dict([(k, field_dict(tuple(v))) for k, v in itertools.groupby(marc[1], key=lambda k: k[0])])

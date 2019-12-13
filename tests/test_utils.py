@@ -82,3 +82,10 @@ def test_mixed_materials():
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("000724", "i", "1980", "2005", "xxu",
          ("     ", " ", "          "), "eng", " ", " ")
+
+
+def test_marc_dict():
+    marc = marcdata.marc_list(REC1)
+    md = marcdata.utils.marc_dict(marc)
+    print(md)
+    assert 1 == 2
