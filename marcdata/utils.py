@@ -164,7 +164,7 @@ def marc_dict(marc):
             **dict([(m[0], field_dict(m[1])) for m in
                     groupby(marc[1], key=lambda k: k[0])]),
             # Overwrite the default 008 dict with specialized version
-            **{"008": (control_dict(fixed_length_tuple(marc)),)}}
+            **{"008": (control_dict(fixed_length_dict(marc)),)}}
 
 
 def fixed_length_dict(rec):

@@ -92,6 +92,9 @@ def test_marc_dict():
     assert md["003"][0]["type"] == "control"
     assert md["003"][0]["value"] == "DLC"
 
+    # 008 field is a dict
+    assert type(md["008"][0]["value"]) == dict
+
     # The 650 field has two values
     assert len(md["650"]) == 2
 
