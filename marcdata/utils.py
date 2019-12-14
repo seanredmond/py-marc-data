@@ -11,6 +11,34 @@ LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
               "length_of_starting_character_position_portion",
               "length_of_implication_defined_portion", "undefined")
 
+MD_FIELDS = {
+    "BK": ("illustrations", "target_audience", "form_of_item",
+           "nature_of_contents", "government_publication",
+           "conference_publication", "festschrift", "index", "undefined",
+           "literary form", "biography"),
+    "CF": ("undefined", "target_audience", "form_of_item", "undefined2",
+           "type_of_computer_file", "undefined3", "government_publication",
+           "undefined4"),
+    "MP": ("relief", "projection", "undefined",
+           "type_of_cartographic_material", "undefined2",
+           "government_publication", "form_of_item", "undefined3", "index",
+           "undefined4", "special_format_characteristics"),
+    "MU": ("form_of_composition", "format_of_music", "music_parts",
+           "target_audience", "form_of_item", "accompanyingd_ matter",
+           "literary_text_for_sound_recordings", "undefined",
+           "transposition_and_arrangement", "undefined2"),
+    "CR": ("frequency", "regularity", "undefined",
+           "type_of_continuing_resource", "form_of_original_item",
+           "form_of_item", "nature_of_entire_work", "nature_of_contents",
+           "government_publication", "conference_publication", "undefined2",
+           "original_alphabet_or_script_of_title", "entry_convention"),
+    "VM": ("running_time_for_motion_pictures_and_videorecordings",
+           "undefined", "target_audience", "undefined2",
+           "government_publication", "form_of_item", "undefined3",
+           "type_of_visual_material", "technique"),
+    "MX": ("Undefined", "form_of_item", "undefined2")
+    }
+
 
 def fixed_length_tuple(rec):
     f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
@@ -138,4 +166,22 @@ def marc_dict(marc):
             # Overwrite the default 008 dict with specialized version
             **{"008": (control_dict(fixed_length_tuple(marc)),)}}
 
+
+def fixed_length_dict(rec):
+    f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
+    return {**{"date_entered": f[0:6],
+               "type_of_date": f[6],
+               "date1": f[7:11],
+               "date2": f[11:15],
+               "place_of_publication": f[15:18]},
+            **material_desc_dict(material_type(rec), f[18:35]),
+            **{"language": f[35:38],
+               "modified_record": f[38],
+               "cataloging_source": f[39]}}
     
+
+def material_desc_dict(m, d):
+    return dict(zip(MD_FIELDS[m],
+                    {"BK": material_bk, "CF": material_cf, "MP": material_mp,
+                     "MU": material_mu, "CR": material_cr, "VM": material_vm,
+                     "MX": material_mx}[m](d)))

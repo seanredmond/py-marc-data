@@ -102,3 +102,92 @@ def test_marc_dict():
     assert len(md["650"][1]["subfields"]) == 2
     assert md["650"][1]["subfields"]["a"] == "Homeopathy"
     assert md["650"][1]["subfields"]["x"] == "Materia medica and therapeutics."
+
+
+def test_fixed_length_dict():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC1))
+    assert fd["place_of_publication"] == "ilu"
+    assert fd["language"] == "eng"
+
+
+def test_mat_desc_dict_bk():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC1))
+    assert "target_audience" in fd
+    assert "form_of_item" in fd
+    assert "illustrations" in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" not in fd
+
+
+def test_mat_desc_dict_cf():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_CF))
+    assert "target_audience" in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" not in fd
+
+
+def test_mat_desc_dict_mp():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MP))
+    assert "target_audience" not in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" not in fd
+
+
+def test_mat_desc_dict_mu():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MU))
+    assert "target_audience" in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" not in fd
+
+
+def test_mat_desc_dict_cr():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_CR))
+    assert "target_audience" not in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" in fd
+    assert "type_of_visual_material" not in fd
+
+
+def test_mat_desc_dict_vm():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_VM))
+    assert "target_audience" in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" in fd
+
+def test_mat_desc_dict_mx():
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MX))
+    assert "target_audience" not in fd
+    assert "form_of_item" in fd
+    assert "illustrations" not in fd
+    assert "type_of_computer_file" not in fd
+    assert "type_of_cartographic_material" not in fd
+    assert "form_of_composition" not in fd
+    assert "type_of_continuing_resource" not in fd
+    assert "type_of_visual_material" not in fd
