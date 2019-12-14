@@ -85,7 +85,20 @@ def test_mixed_materials():
 
 
 def test_marc_dict():
-    marc = marcdata.marc_list(REC1)
-    md = marcdata.utils.marc_dict(marc)
-    print(md)
-    assert 1 == 2
+    md = marcdata.utils.marc_dict(marcdata.marc_list(REC1))
+
+    # Control field has one value
+    assert len(md["003"]) == 1
+    assert md["003"][0]["type"] == "control"
+    assert md["003"][0]["value"] == "DLC"
+
+    # The 650 field has two values
+    assert len(md["650"]) == 2
+
+    # The second 650 has two subfields
+    assert md["650"][1]["type"] == "variable"
+    assert md["650"][1]["ind1"] == " "
+    assert md["650"][1]["ind2"] == "0"
+    assert len(md["650"][1]["subfields"]) == 2
+    assert md["650"][1]["subfields"]["a"] == "Homeopathy"
+    assert md["650"][1]["subfields"]["x"] == "Materia medica and therapeutics."

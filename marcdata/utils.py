@@ -1,5 +1,16 @@
-import itertools
+from itertools import groupby
 from marcdata import *
+
+LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
+              "type_of_control", "character_encoding_scheme",
+              "indicator_count", "subfield_code_count",
+              "base_address_of_data", "encoding_level",
+              "descriptive_cataloging_form",
+              "multipart_resource_record_level",
+              "length_of_length_of_field_portion",
+              "length_of_starting_character_position_portion",
+              "length_of_implication_defined_portion", "undefined")
+
 
 def fixed_length_tuple(rec):
     f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
@@ -31,15 +42,6 @@ def material_mp(d):
 def material_mu(d):
     return (d[0:2], d[2], d[3], d[4], d[5], d[6:12], d[12:14], d[14],
             d[15], d[16])
-LDR_FIELDS = ("record_status", "type_of_record", "bibliographic_level",
-              "type_of_control", "character_encoding_scheme",
-              "indicator_count", "subfield_code_count",
-              "base_address_of_data", "encoding_level",
-              "descriptive_cataloging_form",
-              "multipart_resource_record_level",
-              "length_of_length_of_field_portion",
-              "length_of_starting_character_position_portion",
-              "length_of_implication_defined_portion", "undefined")
 
 
 def leader_dict(l):
@@ -108,15 +110,32 @@ def material_type(rec):
     raise ValueError
 
 
-def subfield_dict(s):
-    return s
+def control_dict(v):
+    """ Wrap a control field value in a dict. """
+    return {"type": "control", "value": v}
+    
 
-def field_dict(v):
-    if v[0][3][0] is None:
-        return v[0][3][1]
-    return tuple([{"ind1": f[1], "ind2": f[2], "subfields": subfield_dict(f[3])} for f in v])
+def subfield_dict(marc_subfield):
+    """ Create appropriate dict for values in a control or variable field. """
+    if marc_subfield[3][0] is None:
+        return control_dict(marc_subfield[3][1])
+    return {"type": "variable",
+            "ind1": marc_subfield[1],
+            "ind2": marc_subfield[2],
+            "subfields": dict(marc_subfield[3:])}
+
+
+def field_dict(marc_field):
+    """ Create a tuple of dicts for fields. """
+    return tuple([subfield_dict(f) for f in marc_field])
 
 
 def marc_dict(marc):
-    print(marc[1])
-    return dict([(k, field_dict(tuple(v))) for k, v in itertools.groupby(marc[1], key=lambda k: k[0])])
+    """ Create nested dicts out of the nested tuples. """
+    return {**leader_dict(marc[0]),
+            **dict([(m[0], field_dict(m[1])) for m in
+                    groupby(marc[1], key=lambda k: k[0])]),
+            # Overwrite the default 008 dict with specialized version
+            **{"008": (control_dict(fixed_length_tuple(marc)),)}}
+
+    
