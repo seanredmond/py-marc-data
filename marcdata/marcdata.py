@@ -5,7 +5,7 @@ class InvalidMarcError(Exception):
     pass
 
 
-def marc_list(d):
+def marc_tuple(d):
     ldr = leader(d[0:LDR_LEN].decode())
     vf = variable_fields(
         directory(d[LDR_LEN:ldr[7]-5].decode()),
@@ -88,7 +88,7 @@ def from_file(f):
             try:
                 reclen = int(file.read(5))
                 rec = file.read(reclen - 5)
-                yield marc_list(rec)
+                yield marc_tuple(rec)
                 offset += reclen
             except InvalidMarcError as e:
                 raise InvalidMarcError(

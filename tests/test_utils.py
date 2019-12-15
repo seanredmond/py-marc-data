@@ -5,7 +5,7 @@ from tests.marc_records import *
 
 
 def test_leader_dict():
-    marc = marcdata.marc_list(REC1)
+    marc = marcdata.marc_tuple(REC1)
     ldr = marcdata.utils.leader_dict(marc[0])
 
     assert ldr["record_status"] == "c"
@@ -25,14 +25,14 @@ def test_leader_dict():
 
 
 def test_fixed_length_tuple():
-    marc = marcdata.marc_list(REC1)
+    marc = marcdata.marc_tuple(REC1)
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("800108", "s", "1899", "    ", "ilu",
          ("    ", " ", " ", "    ", " ", "0", "0", "0", " ", "0", " "),
          "eng", " ", " ")
 
 def test_map():
-    marc = marcdata.marc_list(REC_MP)
+    marc = marcdata.marc_tuple(REC_MP)
     assert marcdata.utils.material_type(marc) == "MP"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("940812", "m", "1898", "1906", "pau",
@@ -41,7 +41,7 @@ def test_map():
 
 
 def test_computer_file():
-    marc = marcdata.marc_list(REC_CF)
+    marc = marcdata.marc_tuple(REC_CF)
     assert marcdata.utils.material_type(marc) == "CF"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("000110", "s", "2000", "    ", "ohu",
@@ -50,7 +50,7 @@ def test_computer_file():
 
 
 def test_music():
-    marc = marcdata.marc_list(REC_MU)
+    marc = marcdata.marc_tuple(REC_MU)
     assert marcdata.utils.material_type(marc) == "MU"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("000824", "s", "1998", "    ", "nyu",
@@ -59,7 +59,7 @@ def test_music():
 
 
 def test_continuing_resource():
-    marc = marcdata.marc_list(REC_CR)
+    marc = marcdata.marc_tuple(REC_CR)
     assert marcdata.utils.material_type(marc) == "CR"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("940906", "u", "1994", "9999", "dcu",
@@ -68,7 +68,7 @@ def test_continuing_resource():
 
 
 def test_visual_materials():
-    marc = marcdata.marc_list(REC_VM)
+    marc = marcdata.marc_tuple(REC_VM)
     assert marcdata.utils.material_type(marc) == "VM"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("991028", "s", "    ", "    ", "xxu",
@@ -77,7 +77,7 @@ def test_visual_materials():
 
 
 def test_mixed_materials():
-    marc = marcdata.marc_list(REC_MX)
+    marc = marcdata.marc_tuple(REC_MX)
     assert marcdata.utils.material_type(marc) == "MX"
     assert marcdata.utils.fixed_length_tuple(marc) == \
         ("000724", "i", "1980", "2005", "xxu",
@@ -85,7 +85,7 @@ def test_mixed_materials():
 
 
 def test_marc_dict():
-    md = marcdata.utils.marc_dict(marcdata.marc_list(REC1))
+    md = marcdata.utils.marc_dict(marcdata.marc_tuple(REC1))
 
     # Control field has one value
     assert len(md["003"]) == 1
@@ -108,13 +108,13 @@ def test_marc_dict():
 
 
 def test_fixed_length_dict():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC1))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC1))
     assert fd["place_of_publication"] == "ilu"
     assert fd["language"] == "eng"
 
 
 def test_mat_desc_dict_bk():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC1))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC1))
     assert "target_audience" in fd
     assert "form_of_item" in fd
     assert "illustrations" in fd
@@ -126,7 +126,7 @@ def test_mat_desc_dict_bk():
 
 
 def test_mat_desc_dict_cf():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_CF))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_CF))
     assert "target_audience" in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
@@ -138,7 +138,7 @@ def test_mat_desc_dict_cf():
 
 
 def test_mat_desc_dict_mp():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MP))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_MP))
     assert "target_audience" not in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
@@ -150,7 +150,7 @@ def test_mat_desc_dict_mp():
 
 
 def test_mat_desc_dict_mu():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MU))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_MU))
     assert "target_audience" in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
@@ -162,7 +162,7 @@ def test_mat_desc_dict_mu():
 
 
 def test_mat_desc_dict_cr():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_CR))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_CR))
     assert "target_audience" not in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
@@ -174,7 +174,7 @@ def test_mat_desc_dict_cr():
 
 
 def test_mat_desc_dict_vm():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_VM))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_VM))
     assert "target_audience" in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
@@ -185,7 +185,7 @@ def test_mat_desc_dict_vm():
     assert "type_of_visual_material" in fd
 
 def test_mat_desc_dict_mx():
-    fd = marcdata.utils.fixed_length_dict(marcdata.marc_list(REC_MX))
+    fd = marcdata.utils.fixed_length_dict(marcdata.marc_tuple(REC_MX))
     assert "target_audience" not in fd
     assert "form_of_item" in fd
     assert "illustrations" not in fd
