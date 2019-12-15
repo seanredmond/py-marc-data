@@ -1,9 +1,9 @@
 # Marcdata
 
 [![PyPi Version](https://badge.fury.io/py/marcdata.svg)][pypi]
-[![Build Status](http://img.shields.io/travis/seanredmond/marcdata-py.svg)][travis]
+[![Build Status](http://img.shields.io/travis/seanredmond/py-marc-data.svg)][travis]
 
-[travis]: http://travis-ci.org/seanredmond/marcdata-py
+[travis]: http://travis-ci.org/seanredmond/py-marc-data
 [pypi]: https://pypi.org/project/marcdata/
 
 Load binary MARC files into a simple nested tuples (or nested dicts) data structure.
