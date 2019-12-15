@@ -5,8 +5,9 @@ from tests.marc_records import *
 
 
 def test_leader_dict():
-    marc = marcdata.marc_tuple(REC1)
-    ldr = marcdata.utils.leader_dict(marc[0])
+    marc = marcdata.utils.marc_dict(marcdata.marc_tuple(REC1))
+    print(marc.keys())
+    ldr = marc["leader"]
 
     assert ldr["record_status"] == "c"
     assert ldr["type_of_record"] == "a"

@@ -41,57 +41,56 @@ MD_FIELDS = {
 
 
 def fixed_length_tuple(rec):
+    """ Unpack the 008 field of a record (arg1) into a tuple.
+
+    Unpacks the Fixed-Length Data Elements fields (008) of a record
+    into a tuple containing the values of the separate fields.
+
+    The sixth element in the tuple containing the fields appropriate
+    to the material configuration of the record (positions 18-34) in
+    the field value.
+
+    """
+    
     f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
     return (f[0:6], f[6], f[7:11], f[11:15], f[15:18],
-            material_desc(material_type(rec), f[18:35]), f[35:38],
+            __material_desc(material_type(rec), f[18:35]), f[35:38],
             f[38], f[39])
 
 
-def material_desc(m, d):
-    return {"BK": material_bk, "CF": material_cf, "MP": material_mp,
-            "MU": material_mu, "CR": material_cr, "VM": material_vm,
-            "MX": material_mx}[m](d)
+def fixed_length_dict(rec):
+    """ Unpack the 008 field of a record (arg1) into a dict. """
+    
+    f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
+    return {**{"date_entered": f[0:6],
+               "type_of_date": f[6],
+               "date1": f[7:11],
+               "date2": f[11:15],
+               "place_of_publication": f[15:18]},
+            **__material_desc_dict(material_type(rec), f[18:35]),
+            **{"language": f[35:38],
+               "modified_record": f[38],
+               "cataloging_source": f[39]}}
+    
 
-
-def material_bk(d):
-    return (d[0:4], d[4], d[5], d[6:10], d[10], d[11], d[12], d[13],
-            d[14], d[15], d[16])
-
-
-def material_cf(d):
-    return (d[0:4], d[4], d[5], d[6:8], d[8], d[9], d[10], d[11:])
-
-
-def material_mp(d):
-    return (d[0:4], d[4:6], d[6], d[7], d[8:10], d[10], d[11], d[12],
-            d[13], d[14], d[15:])
-
-
-def material_mu(d):
-    return (d[0:2], d[2], d[3], d[4], d[5], d[6:12], d[12:14], d[14],
-            d[15], d[16])
-
-
-def leader_dict(l):
-    return dict(zip(LDR_FIELDS, l))
-
-
-def material_cr(d):
-    return (d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7:10], d[10],
-            d[11], d[12:15], d[15], d[16])
-
-
-def material_vm(d):
-    return (d[0:3], d[3], d[4], d[5:10], d[10], d[11], d[12:15],
-            d[15], d[16])
-
-
-def material_mx(d):
-    return (d[0:5], d[6], d[7:])
+def marc_dict(marc):
+    """ Create nested dicts out of the nested tuples. """
+    return {**{"leader" :__leader_dict(marc[0])},
+            **dict([(m[0], __field_dict(m[1])) for m in
+                    groupby(marc[1], key=lambda k: k[0])]),
+            # Overwrite the default 008 dict with specialized version
+            **{"008": (__control_dict(fixed_length_dict(marc)),)}}
 
 
 def material_type(rec):
-    """ Determine material type from leader values."""
+    """Determine material type for record (arg1). 
+    
+    Returns: 
+    A string, one of BK (books), CF (computer files), MP
+    (maps), MU (music), CR (continuing resource), VM (visual
+    materials), MX (mixed materials)
+
+    """
 
     l = rec[0]
     
@@ -138,50 +137,83 @@ def material_type(rec):
     raise ValueError
 
 
-def control_dict(v):
+def __leader_dict(l):
+    """ A dict representation of the leader. """
+    return dict(zip(LDR_FIELDS, l))
+
+
+
+def __material_desc(m, d):
+    """ Unpack positions 18-34 into material specific data structure. """ 
+    return {"BK": __material_bk, "CF": __material_cf, "MP": __material_mp,
+            "MU": __material_mu, "CR": __material_cr, "VM": __material_vm,
+            "MX": __material_mx}[m](d)
+
+
+def __material_bk(d):
+    """ Fixed length data fields for books. """
+    return (d[0:4], d[4], d[5], d[6:10], d[10], d[11], d[12], d[13],
+            d[14], d[15], d[16])
+
+
+def __material_cf(d):
+    """ Fixed length data fields for computer files. """
+    return (d[0:4], d[4], d[5], d[6:8], d[8], d[9], d[10], d[11:])
+
+
+def __material_mp(d):
+    """ Fixed length data fields for maps. """
+    return (d[0:4], d[4:6], d[6], d[7], d[8:10], d[10], d[11], d[12],
+            d[13], d[14], d[15:])
+
+
+def __material_mu(d):
+    """ Fixed length data fields for music. """
+    return (d[0:2], d[2], d[3], d[4], d[5], d[6:12], d[12:14], d[14],
+            d[15], d[16])
+
+
+def __material_cr(d):
+    """ Fixed length data fields for continuing resources. """
+    return (d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7:10], d[10],
+            d[11], d[12:15], d[15], d[16])
+
+
+def __material_vm(d):
+    """ Fixed length data fields for visual materials. """
+    return (d[0:3], d[3], d[4], d[5:10], d[10], d[11], d[12:15],
+            d[15], d[16])
+
+
+def __material_mx(d):
+    """ Fixed length data fields for mixed materials. """
+    return (d[0:5], d[6], d[7:])
+
+
+def __control_dict(v):
     """ Wrap a control field value in a dict. """
     return {"type": "control", "value": v}
     
 
-def subfield_dict(marc_subfield):
+def __subfield_dict(marc_subfield):
     """ Create appropriate dict for values in a control or variable field. """
     if marc_subfield[3][0] is None:
-        return control_dict(marc_subfield[3][1])
+        return __control_dict(marc_subfield[3][1])
     return {"type": "variable",
             "ind1": marc_subfield[1],
             "ind2": marc_subfield[2],
             "subfields": dict(marc_subfield[3:])}
 
 
-def field_dict(marc_field):
+def __field_dict(marc_field):
     """ Create a tuple of dicts for fields. """
-    return tuple([subfield_dict(f) for f in marc_field])
+    return tuple([__subfield_dict(f) for f in marc_field])
 
 
-def marc_dict(marc):
-    """ Create nested dicts out of the nested tuples. """
-    return {**leader_dict(marc[0]),
-            **dict([(m[0], field_dict(m[1])) for m in
-                    groupby(marc[1], key=lambda k: k[0])]),
-            # Overwrite the default 008 dict with specialized version
-            **{"008": (control_dict(fixed_length_dict(marc)),)}}
-
-
-def fixed_length_dict(rec):
-    f = control_value([fld for fld in rec[1] if fld[0] == "008"][0])
-    return {**{"date_entered": f[0:6],
-               "type_of_date": f[6],
-               "date1": f[7:11],
-               "date2": f[11:15],
-               "place_of_publication": f[15:18]},
-            **material_desc_dict(material_type(rec), f[18:35]),
-            **{"language": f[35:38],
-               "modified_record": f[38],
-               "cataloging_source": f[39]}}
-    
-
-def material_desc_dict(m, d):
+def __material_desc_dict(m, d):
+    """ Unpack positions 18-34 into material specific dict. """ 
     return dict(zip(MD_FIELDS[m],
-                    {"BK": material_bk, "CF": material_cf, "MP": material_mp,
-                     "MU": material_mu, "CR": material_cr, "VM": material_vm,
-                     "MX": material_mx}[m](d)))
+                    {"BK": __material_bk, "CF": __material_cf,
+                     "MP": __material_mp, "MU": __material_mu,
+                     "CR": __material_cr, "VM": __material_vm,
+                     "MX": __material_mx}[m](d)))
